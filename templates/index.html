@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.name }} | Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    animation: { 'blob': 'blob 7s infinite' },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-padding-top: 100px; }
+        body { background-color: #050505; color: #ffffff; overflow-x: hidden; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="antialiased relative min-h-screen selection:bg-purple-500 selection:text-white">
+
+    <div class="fixed inset-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-0 -left-4 w-72 h-72 bg-purple-500 rounded-full filter blur-[128px] opacity-30 animate-blob"></div>
+        <div class="absolute top-0 -right-4 w-72 h-72 bg-blue-500 rounded-full filter blur-[128px] opacity-30 animate-blob animation-delay-2000"></div>
+    </div>
+
+    <nav class="fixed w-full z-50 top-0 glass-panel border-b border-white/5">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="font-display text-2xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+                {{ user.name }}.
+            </a>
+            
+            <div class="flex items-center space-x-2 md:space-x-4 text-xs md:text-sm font-medium">
+                <a href="#about" class="px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300">About</a>
+                <a href="#projects" class="px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300">Work</a>
+            </div>
+        </div>
+    </nav>
+
+    <section id="about" class="relative pt-40 pb-20 px-6 max-w-6xl mx-auto flex flex-col justify-center min-h-[75vh]">
+        <div class="max-w-3xl">
+            <div class="inline-flex items-center space-x-2 glass-panel px-4 py-2 rounded-full mb-6">
+                <span class="text-xs font-semibold tracking-wider text-purple-400 uppercase">{{ user.role }}</span>
+            </div>
+            
+            <h1 class="font-display text-5xl md:text-7xl font-bold leading-tight mb-6">
+                Designing experiences, <br/>building solutions.
+            </h1>
+            
+            <p class="text-lg md:text-xl text-gray-400 mb-10 leading-relaxed font-light">
+                {{ user.bio }}
+            </p>
+            
+            <div class="flex flex-wrap gap-4">
+                <a href="#projects" class="px-8 py-4 bg-white text-black font-semibold rounded-full hover:scale-105 transition-transform duration-300 shadow-xl">View My Work</a>
+                <a href="{{ user.github }}" target="_blank" class="px-8 py-4 glass-panel text-white font-semibold rounded-full hover:bg-white/10 transition-colors flex items-center gap-2">GitHub ↗</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="py-20 px-6 max-w-6xl mx-auto">
+        <div class="mb-12">
+            <h2 class="font-display text-4xl md:text-5xl font-bold mb-4">Featured Projects</h2>
+            <div class="h-1 w-20 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"></div>
+        </div>
+
+        <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="glass-panel p-6 rounded-2xl h-64 animate-pulse"></div>
+        </div>
+    </section>
+
+    <footer id="contact" class="border-t border-white/10 mt-20">
+        <div class="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between">
+            <p class="text-gray-500 text-sm">© 2026 {{ user.name }}. Crafted with Portfolio Builder.</p>
+            <div class="flex space-x-6 text-sm">
+                <a href="{{ user.linkedin }}" target="_blank" class="text-gray-400 hover:text-white transition-colors">LinkedIn</a>
+                <a href="mailto:{{ user.email }}" class="text-gray-400 hover:text-white transition-colors">Email</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => { fetchProjects(); });
+
+        async function fetchProjects() {
+            const grid = document.getElementById('projects-grid');
+            try {
+                const response = await fetch('/api/projects/{{ username }}');
+                const projects = await response.json();
+                grid.innerHTML = ''; 
+                
+                if (projects.length === 0) {
+                    grid.innerHTML = `<p class="text-gray-500 col-span-full py-10">No projects listed yet. They will appear here once added from the dashboard.</p>`;
+                    return;
+                }
+
+                projects.forEach(project => {
+                    const card = document.createElement('div');
+                    card.className = 'group glass-panel p-8 rounded-3xl flex flex-col justify-between hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(168,85,247,0.12)] hover:border-purple-500/20 transition-all duration-500 relative overflow-hidden';
+                    const tags = project.tech_stack.map(tech => `<span class="bg-white/5 text-gray-300 text-xs font-medium px-2.5 py-1 rounded-full border border-white/10">${tech}</span>`).join('');
+
+                    card.innerHTML = `
+                        <div class="relative z-10">
+                            <h4 class="font-display text-2xl font-bold text-white mb-2 tracking-tight group-hover:text-purple-300 transition-colors">${project.title}</h4>
+                            <p class="text-gray-400 text-sm font-light leading-relaxed mb-6">${project.description}</p>
+                        </div>
+                        <div class="relative z-10 mt-auto">
+                            <div class="flex flex-wrap gap-1.5 mb-6">${tags}</div>
+                            <div class="flex items-center gap-4 text-sm font-semibold pt-4 border-t border-white/5">
+                                ${project.github_link ? `<a href="${project.github_link}" target="_blank" class="text-gray-300 hover:text-white transition-colors">Code ↗</a>` : ''}
+                                ${project.live_link ? `<a href="${project.live_link}" target="_blank" class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Live Demo →</a>` : ''}
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                grid.innerHTML = `<p class="text-red-400 col-span-full">Failed to stream projects.</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

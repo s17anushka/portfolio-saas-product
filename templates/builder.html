@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Premium Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #050505; color: #ffffff; font-family: 'Outfit', sans-serif; }
+        .glass-panel { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.05); }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+    <div class="absolute w-96 h-96 bg-purple-600/20 rounded-full filter blur-[120px] top-10 left-10 -z-10"></div>
+    
+    <div class="glass-panel p-8 md:p-10 rounded-3xl w-full max-w-lg shadow-2xl">
+        <h1 class="text-3xl font-extrabold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">Portfolio Builder</h1>
+        <p class="text-gray-400 text-sm mb-8">Create your customized portfolio card dashboard instantly.</p>
+        
+        <form action="/create-portfolio" method="POST" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Unique Username</label>
+                    <input type="text" name="username" required placeholder="e.g. anushka" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Password</label>
+                    <input type="password" name="password" required placeholder="Create a secure password" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Full Name</label>
+                <input type="text" name="name" required placeholder="e.g. Anushka" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Professional Role</label>
+                <input type="text" name="role" required placeholder="e.g. Developer & Designer" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Short Bio</label>
+                <textarea name="bio" required rows="2" placeholder="Tell the world what you build..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="url" name="github" placeholder="GitHub URL" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-purple-500">
+                <input type="url" name="linkedin" placeholder="LinkedIn URL" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-purple-500">
+            </div>
+            <input type="email" name="email" required placeholder="Email Address" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500">
+            
+            <button type="submit" class="w-full mt-4 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold py-3.5 px-4 rounded-xl hover:opacity-90 transition-all">
+                Generate My Portfolio Website 🚀
+            </button>
+        </form>
+        
+        <div class="mt-6 pt-4 border-t border-white/10 text-center">
+            <p class="text-sm text-gray-400">Already have a portfolio? <a href="/login" class="text-purple-400 hover:text-purple-300 font-semibold transition-colors">Login Here</a></p>
+        </div>
+    </div>
+</body>
+</html>

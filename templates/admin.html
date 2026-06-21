@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Portfolio Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #050505; color: #ffffff; font-family: 'Outfit', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+    <div class="absolute w-96 h-96 bg-purple-600/10 rounded-full filter blur-[150px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10"></div>
+
+    <div class="glass-panel p-8 rounded-3xl w-full max-w-xl shadow-2xl">
+        
+        <div class="flex justify-between items-center mb-1">
+            <h2 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">Admin Dashboard</h2>
+            <a href="/logout" class="text-sm text-red-400 hover:text-red-300 transition border border-red-500/30 px-4 py-1.5 rounded-full bg-red-500/10 font-semibold">Logout</a>
+        </div>
+        <p class="text-gray-400 text-xs mb-6">Welcome back, @{{ username }}</p>
+        
+        <div class="mt-3 mb-6 p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="text-sm w-full">
+                <span class="text-gray-400">Your Shareable Link:</span><br/>
+                <span class="font-bold text-white tracking-wide break-all select-all cursor-pointer">your-website.com/{{ username }}</span>
+            </div>
+            <a href="/{{ username }}" target="_blank" class="w-full sm:w-auto text-center text-xs bg-purple-600 hover:bg-purple-500 text-white px-5 py-2.5 rounded-lg transition font-semibold whitespace-nowrap shadow-lg">
+                View Live Portfolio →
+            </a>
+        </div>
+
+        <div class="h-px w-full bg-white/10 mb-6"></div>
+
+        <h3 class="text-lg font-bold mb-4 text-white flex items-center gap-2">
+            <span>Add New Project</span>
+            <span class="bg-blue-500/20 text-blue-400 text-[10px] px-2 py-0.5 rounded-full border border-blue-500/30">Live Sync</span>
+        </h3>
+        
+        <form id="project-form" class="space-y-4">
+            <input type="hidden" id="username" value="{{ username }}">
+            
+            <div>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Project Title</label>
+                <input type="text" id="title" required placeholder="e.g. AI Surrogate Modeler" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-purple-500 transition-colors">
+            </div>
+            
+            <div>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Description</label>
+                <textarea id="description" required rows="3" placeholder="Explain what you built..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-purple-500 transition-colors"></textarea>
+            </div>
+            
+            <div>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Tech Stack (comma separated)</label>
+                <input type="text" id="tech_stack" required placeholder="e.g. Python, Scikit-Learn, React" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-purple-500 transition-colors">
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">GitHub Link (Optional)</label>
+                    <input type="url" id="github_link" placeholder="https://github.com/..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-purple-500 transition-colors">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Live Demo (Optional)</label>
+                    <input type="url" id="live_link" placeholder="https://..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-purple-500 transition-colors">
+                </div>
+            </div>
+            
+            <button type="submit" class="w-full mt-6 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold py-3.5 px-4 rounded-xl hover:opacity-90 transition-all transform hover:scale-[1.01] shadow-lg flex justify-center items-center gap-2">
+                Launch Project 🚀
+            </button>
+            <p id="status" class="text-center text-sm mt-3 hidden"></p>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('project-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const status = document.getElementById('status');
+            status.classList.remove('hidden');
+            status.className = "text-center text-sm mt-3 text-blue-400";
+            status.innerText = "Deploying project...";
+            
+            const data = {
+                username: document.getElementById('username').value,
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                tech_stack: document.getElementById('tech_stack').value,
+                github_link: document.getElementById('github_link').value,
+                live_link: document.getElementById('live_link').value
+            };
+
+            try {
+                const response = await fetch('/api/projects', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    status.className = "text-center text-sm mt-3 text-green-400 font-medium";
+                    status.innerText = "Success! Project is now live on your portfolio.";
+                    document.getElementById('project-form').reset();
+                } else { 
+                    throw new Error(); 
+                }
+            } catch {
+                status.className = "text-center text-sm mt-3 text-red-400 font-medium";
+                status.innerText = "Error deploying project. Is your backend running?";
+            }
+        });
+    </script>
+</body>
+</html>
